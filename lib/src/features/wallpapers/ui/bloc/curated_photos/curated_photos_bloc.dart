@@ -10,6 +10,8 @@ import 'package:wallpaper_hub/src/core/utils/sealed/api_state.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/domain/entity/photo_entity.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/domain/usecases/get_curated_photos.dart';
 
+import '../../../domain/usecases/search_photos.dart';
+
 part 'curated_photos_event.dart';
 
 part 'curated_photos_state.dart';
@@ -20,12 +22,21 @@ class CuratedPhotosBloc extends Bloc<CuratedPhotosEvent, CuratedPhotosState> {
   int page = 0;
   final int _perPage = 20;
   bool _isLoading = false;
-
   final List<PhotoEntity> photos = [];
+  final SearchPhotosUseCase _searchPhotosUseCase;
 
-  CuratedPhotosBloc(this._getCuratedPhotosUseCase)
+  CuratedPhotosBloc(this._getCuratedPhotosUseCase, this._searchPhotosUseCase)
       : super(CuratedPhotosState()) {
     on<GetCuratedPhotosEvent>(_onGetCuratedPhotosEvent);
+    on<SearchPhotosEvent>(_onSearchPhotosEvent);
+
+    on<SearchQueryChange>(
+      (event, emit) {
+        print(event.query);
+        emit(state.copyWith(query: event.query));
+        print(state.query);
+      },
+    );
   }
 
   ///Fetch curated photos from Pexel Api
@@ -46,6 +57,55 @@ class CuratedPhotosBloc extends Bloc<CuratedPhotosEvent, CuratedPhotosState> {
           perPage: _perPage,
         ),
       );
+      _isLoading = false;
+      if (dataState is DataSuccess) {
+        if (dataState.data == null) return;
+        photos.addAll(dataState.data!);
+        emit(
+          state.copyWith(
+            photos: photos,
+            apiState: SuccessState(),
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            apiState: ErrorState(message: dataState.error.toString()),
+          ),
+        );
+      }
+    } catch (error) {
+      _isLoading = false;
+      emit(
+        state.copyWith(
+          apiState: ErrorState(
+              message: ErrorHandler.handle(error).failure.toString()),
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _onSearchPhotosEvent(
+      SearchPhotosEvent event, Emitter<CuratedPhotosState> emit) async {
+    try {
+      if (_isLoading && !event.refresh) return;
+      _isLoading = true;
+
+      if (event.refresh) {
+        photos.clear();
+        page = 0;
+      }
+      page++;
+
+      emit(state.copyWith(apiState: LoadingState()));
+      final dataState = await _searchPhotosUseCase(
+        param: SearchPhotosParams(
+          query: state.query,
+          page: page,
+          perPage: _perPage,
+        ),
+      );
+
       _isLoading = false;
       if (dataState is DataSuccess) {
         if (dataState.data == null) return;

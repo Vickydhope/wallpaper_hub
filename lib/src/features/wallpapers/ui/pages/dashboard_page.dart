@@ -25,7 +25,8 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> with TickerProviderStateMixin {
+class _DashboardPageState extends State<DashboardPage>
+    with TickerProviderStateMixin {
   final double gapH = 16;
   late ScrollController _scrollController;
 
@@ -49,9 +50,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
   Widget build(BuildContext context) {
     return BlocProvider(
       lazy: false,
-      create: (context) {
-        return locator<CuratedPhotosBloc>()..add(GetCuratedPhotosEvent());
-      },
+      create: (context) =>
+          locator<CuratedPhotosBloc>()..add(GetCuratedPhotosEvent()),
       child: Builder(builder: (context) {
         return Scaffold(
           body: RefreshIndicator(
@@ -63,7 +63,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
               controller: _scrollController
                 ..addListener(
                   () {
-                    var maxScroll = _scrollController.offset == _scrollController.position.maxScrollExtent;
+                    var maxScroll = _scrollController.offset ==
+                        _scrollController.position.maxScrollExtent;
                     var curatedPhotoBloc = context.read<CuratedPhotosBloc>();
                     ApiState state = curatedPhotoBloc.state.apiState;
                     if (maxScroll && state is! LoadingState) {
@@ -137,7 +138,8 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
       sliver: SliverToBoxAdapter(
         child: Text(
           "Featured Photos",
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black87),
+          style: TextStyle(
+              fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black87),
         ),
       ),
     );
@@ -247,7 +249,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
   }) async {
     await Navigator.of(context).push(
       PageRouteBuilder(
-        transitionDuration: 200.ms,
+        transitionDuration: 400.ms,
         pageBuilder: (_, animation, secondaryAnimation) {
           final curvedAnimation = CurvedAnimation(
             parent: animation,
@@ -329,7 +331,8 @@ class CategoryTile extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 category.title,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.w500),
               ),
             )
           ],

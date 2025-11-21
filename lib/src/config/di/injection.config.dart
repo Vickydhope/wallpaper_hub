@@ -56,10 +56,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i462.SearchPhotosUseCase(gh<_i36.WallpaperRepository>()));
     gh.factory<_i828.GetCuratedPhotosUseCase>(
         () => _i828.GetCuratedPhotosUseCase(gh<_i36.WallpaperRepository>()));
+    gh.factory<_i921.CuratedPhotosBloc>(() => _i921.CuratedPhotosBloc(
+          gh<_i828.GetCuratedPhotosUseCase>(),
+          gh<_i462.SearchPhotosUseCase>(),
+        ));
     gh.factory<_i443.SearchPhotosBloc>(
         () => _i443.SearchPhotosBloc(gh<_i462.SearchPhotosUseCase>()));
-    gh.factory<_i921.CuratedPhotosBloc>(
-        () => _i921.CuratedPhotosBloc(gh<_i828.GetCuratedPhotosUseCase>()));
     return this;
   }
 }

@@ -10,3 +10,19 @@ class GetCuratedPhotosEvent extends CuratedPhotosEvent {
     this.refresh = false,
   });
 }
+
+class SearchPhotosEvent extends CuratedPhotosEvent {
+  final bool refresh;
+
+  SearchPhotosEvent({
+    this.refresh = false,
+  });
+}
+
+class SearchQueryChange extends CuratedPhotosEvent {
+  final String query;
+
+  SearchQueryChange({
+    required this.query,
+  });
+}

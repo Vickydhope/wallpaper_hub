@@ -9,20 +9,25 @@ class CachedPhotoWidget extends StatelessWidget {
     this.height,
     this.width,
     this.placeholder,
+    this.offset = 0,
+    this.boxFit = BoxFit.cover,
   });
 
   final double? height, width;
   final String? small;
   final String original;
   final Widget? placeholder;
+  final double offset;
+  final BoxFit boxFit;
 
   @override
   Widget build(BuildContext context) => CachedNetworkImage(
         imageUrl: original,
-        fit: BoxFit.cover,
+        fit: boxFit,
         fadeOutDuration: Duration.zero,
         width: width,
         height: height,
+        alignment: Alignment(offset, 0),
         fadeInDuration: Duration.zero,
         placeholderFadeInDuration: Duration.zero,
         placeholder: (context, url) =>
@@ -30,10 +35,11 @@ class CachedPhotoWidget extends StatelessWidget {
             (small == null
                 ? const SizedBox()
                 : CachedNetworkImage(
+                    alignment: Alignment(offset, 0),
                     imageUrl: small!,
                     width: width,
                     height: height,
-                    fit: BoxFit.cover,
+                    fit: boxFit,
                   )),
       );
 }

@@ -6,12 +6,14 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
 import 'package:wallpaper_hub/src/config/di/injection.dart';
 import 'package:wallpaper_hub/src/core/presentation/components/cached_photo_widget.dart';
-import 'package:wallpaper_hub/src/core/presentation/components/hero_widget.dart';
-import 'package:wallpaper_hub/src/core/utils/hero_tag.dart';
+import 'package:wallpaper_hub/src/core/utils/extensions/animation_helper.dart';
 import 'package:wallpaper_hub/src/core/utils/sealed/api_state.dart';
-import 'package:wallpaper_hub/src/features/wallpapers/ui/bloc/search_photos/search_photos_bloc.dart';
-import 'package:wallpaper_hub/src/features/wallpapers/ui/pages/searched_image_preview_page.dart';
+import 'package:wallpaper_hub/src/features/wallpapers/ui/bloc/curated_photos/curated_photos_bloc.dart';
+import 'package:wallpaper_hub/src/features/wallpapers/ui/pages/image_preview_page.dart';
+
 import 'package:wallpaper_hub/src/features/wallpapers/ui/widgets/search_bar.dart';
+
+import '../../../../core/presentation/shimmer/dashboard_shimmer.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key, required this.query});
@@ -41,19 +43,19 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => locator<SearchPhotosBloc>()
+      create: (context) => locator<CuratedPhotosBloc>()
         ..add(SearchQueryChange(query: widget.query))
-        ..add(SearchPhotos()),
+        ..add(SearchPhotosEvent()),
       child: Builder(
         builder: (context) {
-          var state = context.watch<SearchPhotosBloc>().state;
+          var state = context.watch<CuratedPhotosBloc>().state;
           return Scaffold(
             appBar: _buildAppBar(context),
             body: Column(
               children: [
                 _buildSearchBar(context),
                 const Gap(8),
-                _buildImageView(context, state),
+                Expanded(child: _buildImageView(context, state)),
               ],
             ),
           );
@@ -66,67 +68,85 @@ class _SearchPageState extends State<SearchPage> {
     return SearchBarWidget(
         searchController: _searchQueryController,
         onChanged: (value) {
-          context.read<SearchPhotosBloc>().add(SearchQueryChange(query: value));
+          context
+              .read<CuratedPhotosBloc>()
+              .add(SearchQueryChange(query: value));
         },
         onSubmitted: (value) {
           if (_searchQueryController.text.trim().isEmpty) {
             return;
           }
-          context.read<SearchPhotosBloc>().add(SearchPhotos(refresh: true));
+          context
+              .read<CuratedPhotosBloc>()
+              .add(SearchPhotosEvent(refresh: true));
         },
         onSearchPressed: () async {
           FocusManager.instance.primaryFocus?.unfocus();
           if (_searchQueryController.text.isEmpty) return;
-          context.read<SearchPhotosBloc>().add(SearchPhotos(refresh: true));
+          context
+              .read<CuratedPhotosBloc>()
+              .add(SearchPhotosEvent(refresh: true));
         });
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+        title: const Text("Search"),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.background);
   }
 
-  Expanded _buildImageView(
+  Widget _buildImageView(
     BuildContext context,
-    SearchPhotosState state,
+    CuratedPhotosState state,
   ) {
-    return Expanded(
-      child: MasonryGridView.count(
-        controller: _scrollController
-          ..addListener(
-            () {
-              var maxScroll = _scrollController.position.maxScrollExtent;
-              var curatedPhotoBloc = context.read<SearchPhotosBloc>();
-              ApiState state = curatedPhotoBloc.state.apiState;
-              if (_scrollController.offset == maxScroll &&
-                  state is! LoadingState) {
-                curatedPhotoBloc.add(SearchPhotos());
-              }
-            },
-          ),
-        padding: const EdgeInsets.all(8),
-        itemCount: state.photos.length,
-        crossAxisCount: 2,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        itemBuilder: (context, index) {
-          var photoSrc = state.photos[index].src;
+    var border = BorderRadius.circular(10);
 
-          return ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: InkWell(
-                onTap: () {
-                  _navigateToPreviewPage(context, index);
-                },
-                child: CachedPhotoWidget(
-                  original: photoSrc.medium,
-                  small: photoSrc.small,
-                ),
-              ));
-        },
-      ),
+    return MasonryGridView.count(
+      controller: _scrollController
+        ..addListener(
+          () {
+            var maxScroll = _scrollController.position.maxScrollExtent;
+            var curatedPhotoBloc = context.read<CuratedPhotosBloc>();
+            ApiState state = curatedPhotoBloc.state.apiState;
+            if (_scrollController.offset == maxScroll &&
+                state is! LoadingState) {
+              curatedPhotoBloc.add(SearchPhotosEvent());
+            }
+          },
+        ),
+      padding: const EdgeInsets.all(8),
+      itemCount: state.photos.length + 1,
+      crossAxisCount: 2,
+      mainAxisSpacing: 4,
+      crossAxisSpacing: 4,
+      itemBuilder: (context, index) {
+        if (index == state.photos.length) {
+          return AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: border,
+                color: Colors.grey.shade400,
+              ),
+            ).shimmer(),
+          );
+        }
+        var photoSrc = state.photos[index].src;
+
+        return ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: InkWell(
+              onTap: () {
+                _navigateToPreviewPage(context, index);
+              },
+              child: CachedPhotoWidget(
+                original: photoSrc.medium,
+                small: photoSrc.small,
+              ),
+            ));
+      },
     );
   }
 
@@ -139,7 +159,6 @@ class _SearchPageState extends State<SearchPage> {
             parent: animation,
             curve: Curves.easeOutExpo,
           );
-
           return SlideTransition(
             position: Tween<Offset>(
               end: Offset.zero,
@@ -149,8 +168,8 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ).animate(curvedAnimation),
             child: BlocProvider.value(
-              value: BlocProvider.of<SearchPhotosBloc>(context),
-              child: SearchedImagePreviewPage(
+              value: BlocProvider.of<CuratedPhotosBloc>(context),
+              child: ImagePreviewPage(
                 index: index,
                 animation: curvedAnimation,
               ),
