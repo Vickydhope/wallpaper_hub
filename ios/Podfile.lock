@@ -2,34 +2,33 @@ PODS:
   - Flutter (1.0.0)
   - flutter_downloader (0.0.1):
     - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
   - objective_c (0.0.1):
     - Flutter
-  - sqflite_darwin (0.0.4):
-    - Flutter
-    - FlutterMacOS
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - objective_c (from `.symlinks/plugins/objective_c/ios`)
-  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
   flutter_downloader:
     :path: ".symlinks/plugins/flutter_downloader/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   objective_c:
     :path: ".symlinks/plugins/objective_c/ios"
-  sqflite_darwin:
-    :path: ".symlinks/plugins/sqflite_darwin/darwin"
 
 SPEC CHECKSUMS:
-  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   flutter_downloader: 78da0da1084e709cbfd3b723c7ea349c71681f09
+  fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
   objective_c: 89e720c30d716b036faf9c9684022048eee1eee2
-  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
 
-PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
+PODFILE CHECKSUM: 9c46fd01abff66081b39f5fa5767b3f1d0b11d76
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0
