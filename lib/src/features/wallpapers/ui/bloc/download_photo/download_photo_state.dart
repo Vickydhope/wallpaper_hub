@@ -2,11 +2,11 @@ part of 'download_photo_bloc.dart';
 
 @immutable
 class DownloadPhotoState {
-  final DownloadState downloadState;
+  final RequestState downloadState;
 
-  DownloadPhotoState({DownloadState? downloadState})
+  DownloadPhotoState({RequestState? downloadState})
       : downloadState = downloadState ?? InitialState();
 
-  DownloadPhotoState copyWith({DownloadState? downloadState}) =>
+  DownloadPhotoState copyWith({RequestState? downloadState}) =>
       DownloadPhotoState(downloadState: downloadState);
 }

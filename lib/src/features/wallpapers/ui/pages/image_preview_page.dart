@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallpaper_hub/src/core/presentation/components/cached_photo_widget.dart';
-import 'package:wallpaper_hub/src/core/utils/sealed/download_state.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/domain/entity/photo_entity.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/domain/entity/src_entity.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/ui/bloc/curated_photos/curated_photos_bloc.dart';

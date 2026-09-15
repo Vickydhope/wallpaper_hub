@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
-import 'package:wallpaper_hub/src/core/utils/sealed/download_state.dart';
+import 'package:wallpaper_hub/src/core/utils/sealed/request_state.dart';
 
 part 'download_photo_event.dart';
 

@@ -7,7 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:wallpaper_hub/src/config/di/injection.dart';
 import 'package:wallpaper_hub/src/core/presentation/components/cached_photo_widget.dart';
 import 'package:wallpaper_hub/src/core/utils/extensions/animation_helper.dart';
-import 'package:wallpaper_hub/src/core/utils/sealed/api_state.dart';
+import 'package:wallpaper_hub/src/core/utils/sealed/request_state.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/ui/bloc/curated_photos/curated_photos_bloc.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/ui/pages/image_preview_page.dart';
 
@@ -109,7 +109,7 @@ class _SearchPageState extends State<SearchPage> {
           () {
             var maxScroll = _scrollController.position.maxScrollExtent;
             var curatedPhotoBloc = context.read<CuratedPhotosBloc>();
-            ApiState state = curatedPhotoBloc.state.apiState;
+            RequestState state = curatedPhotoBloc.state.apiState;
             if (_scrollController.offset == maxScroll &&
                 state is! LoadingState) {
               curatedPhotoBloc.add(SearchPhotosEvent());

@@ -10,7 +10,7 @@ import 'package:wallpaper_hub/src/core/presentation/components/cached_photo_widg
 import 'package:wallpaper_hub/src/core/presentation/shimmer/dashboard_shimmer.dart';
 import 'package:wallpaper_hub/src/core/utils/delegates/custom_sliver_delegate.dart';
 import 'package:wallpaper_hub/src/core/utils/extensions/animation_helper.dart';
-import 'package:wallpaper_hub/src/core/utils/sealed/api_state.dart';
+import 'package:wallpaper_hub/src/core/utils/sealed/request_state.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/data/model/category_model.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/ui/bloc/curated_photos/curated_photos_bloc.dart';
 import 'package:wallpaper_hub/src/features/wallpapers/ui/pages/image_preview_page.dart';
@@ -66,7 +66,7 @@ class _DashboardPageState extends State<DashboardPage>
                     var maxScroll = _scrollController.offset ==
                         _scrollController.position.maxScrollExtent;
                     var curatedPhotoBloc = context.read<CuratedPhotosBloc>();
-                    ApiState state = curatedPhotoBloc.state.apiState;
+                    RequestState state = curatedPhotoBloc.state.apiState;
                     if (maxScroll && state is! LoadingState) {
                       _getCuratedPhotos(context);
                     }

@@ -26,8 +26,6 @@ import '../../features/wallpapers/ui/bloc/curated_photos/curated_photos_bloc.dar
     as _i921;
 import '../../features/wallpapers/ui/bloc/download_photo/download_photo_bloc.dart'
     as _i776;
-import '../../features/wallpapers/ui/bloc/search_photos/search_photos_bloc.dart'
-    as _i443;
 import 'app_module.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -60,8 +58,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i828.GetCuratedPhotosUseCase>(),
           gh<_i462.SearchPhotosUseCase>(),
         ));
-    gh.factory<_i443.SearchPhotosBloc>(
-        () => _i443.SearchPhotosBloc(gh<_i462.SearchPhotosUseCase>()));
     return this;
   }
 }
